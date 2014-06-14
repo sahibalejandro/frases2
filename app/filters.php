@@ -54,6 +54,21 @@ Route::filter('auth.basic', function()
 	return Auth::basic();
 });
 
+Route::filter('auth.basic.once', function ()
+{
+    return Auth::onceBasic('username');
+});
+
+/**
+ * Check if authenticated user is active
+ */
+Route::filter('user.active', function ()
+{
+    if (Auth::user()->active != 'S') {
+        return Response::apiUserAccountBlocked();
+    }
+});
+
 /*
 |--------------------------------------------------------------------------
 | Guest Filter

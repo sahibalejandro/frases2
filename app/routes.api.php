@@ -1,6 +1,6 @@
 <?php
 Route::group(['prefix' => 'api'], function () {
-    Route::resource('authors', 'AuthorsAPIController', [
+    Route::resource('sentences', 'SentencesAPIController', [
         'only' => ['index', 'store', 'show', 'update', 'destroy']
     ]);
     Route::resource('tags', 'TagsAPIController', [

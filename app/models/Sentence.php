@@ -2,6 +2,7 @@
 class Sentence extends Eloquent 
 {
     protected $table = 'sentences';
+    protected $hidden = ['user_id', 'author_id'];
     
     public function tags() 
     {
