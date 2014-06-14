@@ -23,12 +23,9 @@ $app = new Illuminate\Foundation\Application;
 | given environment, then we will automatically detect it for you.
 |
 */
-
-$env = $app->detectEnvironment(array(
-
-	'local' => array('precise64', 'sahib-pro.local'),
-
-));
+$env = $app->detectEnvironment(
+    isset($_ENV['ENV_LOCAL']) ? function () { return 'local'; } : ['local' => ['precise64']]
+);
 
 /*
 |--------------------------------------------------------------------------
