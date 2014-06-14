@@ -24,7 +24,7 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 $env = $app->detectEnvironment(
-    isset($_ENV['ENV_LOCAL']) ? function () { return 'local'; } : ['local' => ['precise64']]
+    ['local' => ['precise64', 'sahib-vps']]
 );
 
 /*
