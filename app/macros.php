@@ -2,13 +2,15 @@
 /**
  * Generit REST API response
  */
-Response::macro('api', function ($data = null, $message = '', $success = true)
+use Acme\Validators\InputValidationException;
+
+Response::macro('api', function ($data = null, $message = '', $success = true, $httpCode = 200)
 {
 	return Response::json([
 		'success' => $success,
 		'message' => $message,
 		'data'    => $data,
-	]);
+	], $httpCode);
 });
 
 /**
@@ -16,15 +18,15 @@ Response::macro('api', function ($data = null, $message = '', $success = true)
  */
 Response::macro('apiNotFound', function ()
 {
-    return Response::api(['code' => 404], 'Resource not found.', false);
+    return Response::api(null, 'Resource not found.', false, 404);
 });
 
 /**
  * Validation errors
  */
-Response::macro('apiValidationErrors', function ($errors, $message)
+Response::macro('apiValidationErrors', function (InputValidationException $e)
 {
-    return Response::api(['errors' => $errors], $message, false);
+    return Response::api(['errors' => $e->getValidationErrors()], $e->getMessage(), false);
 });
 
 /**
@@ -40,5 +42,5 @@ Response::macro('apiDeleted', function ()
  */
 Response::macro('apiUserAccountBlocked', function ()
 {
-    return Response::api(null, 'This user account is blocked.', false);
+    return Response::api(null, 'This user account is blocked.', false, 401);
 });

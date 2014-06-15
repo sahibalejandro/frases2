@@ -2,6 +2,7 @@
 
 use Acme\Validators\InputValidator;
 use Acme\Validators\InputValidationException;
+use Acme\Transform\Transform;
 
 /**
  * Class ResourceAPIController
@@ -21,6 +22,9 @@ abstract class ResourceAPIController extends \BaseController {
     protected $model;
 
 
+    /**
+     * @param InputValidator $validator
+     */
     public function __construct(InputValidator $validator)
 	{
         $this->validator = $validator;
@@ -39,7 +43,7 @@ abstract class ResourceAPIController extends \BaseController {
 	{
         $model = $this->model;
         $resources = $model::all();
-		return Response::api(['resources' => $resources]);
+		return Response::api(['resources' => Transform::collection($resources)]);
 	}
 
 
@@ -51,14 +55,14 @@ abstract class ResourceAPIController extends \BaseController {
 	public function store()
 	{
         $model = $this->model;
-		$input = Input::all();
 
-		try {
-			$this->validator->validate($input);
+        try {
+            $input = Input::all();
+            $this->validator->validate($input);
             $resource = $model::create($input);
-			return Response::api(['resource' => $resource]);
+			return Response::api(['resource' => $resource->transform()]);
 		} catch (InputValidationException $e) {
-			return Response::apiValidationErrors($e->getValidationErrors(), $e->getMessage());
+			return Response::apiValidationErrors($e);
 		}
 	}
 
@@ -77,7 +81,7 @@ abstract class ResourceAPIController extends \BaseController {
         if (!$resource) {
             return Response::apiNotFound();
         } else {
-		    return Response::api(['resource' => $resource]);
+		    return Response::api(['resource' => $resource->transform()]);
         }
 	}
 
@@ -97,14 +101,13 @@ abstract class ResourceAPIController extends \BaseController {
             return Response::apiNotFound();
         }
 
-        $input = Input::all();
-
         try {
+            $input = Input::all();
             $this->validator->validate($input);
             $resource->update($input);
-            return Response::api(['resource' => $resource]);
+            return Response::api(['resource' => $resource->transform()]);
         } catch (InputValidationException $e) {
-            return Response::apiValidationErrors($e->getValidationErrors(), $e->getMessage());
+            return Response::apiValidationErrors($e);
         }
 	}
 
@@ -127,6 +130,4 @@ abstract class ResourceAPIController extends \BaseController {
             return Response::apiDeleted();
         }
 	}
-
-
 }
